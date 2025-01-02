@@ -1,0 +1,22 @@
+version: "3.8"
+services:
+  db:
+    image: mysql:latest
+    container_name: mysql-latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root@password
+      MYSQL_USER: username
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: name-db
+    ports:
+      - "3306:3306"  
+
+  adminer:
+    image: adminer
+    container_name: adminer-hydra
+    restart: always
+    ports:
+      - "0.0.0.0:8080:8080"
+    environment:
+      ADMINER_DESIGN: "hydra"
