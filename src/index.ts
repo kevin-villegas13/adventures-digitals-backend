@@ -1,8 +1,9 @@
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
-import { AppDataSource } from "./database/database";
 import dotenv from "dotenv";
+import authRoutes from "./auth/auth.routes";
+import { AppDataSource } from "./database/database";
 
 dotenv.config();
 
@@ -13,7 +14,11 @@ const PORT = process.env.PORT;
 
 // Middlewares
 app.use(morgan("dev"));
+app.use(express.json());
 app.use(cors());
+
+// Rutas
+app.use("/auth", authRoutes);
 
 const startServer = async () => {
   try {

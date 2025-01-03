@@ -1,7 +1,7 @@
 import { Entity, Column, OneToMany, ManyToMany, JoinTable } from "typeorm";
-import { BaseEntity } from "../common/base-entity";
 import { MetodoPago } from "./metodoPago-entity";
 import { Detalle } from "./detalle-entity";
+import { BaseEntity } from "../common/helper/base-entity";
 
 @Entity("factura")
 export class Factura extends BaseEntity {

@@ -1,6 +1,6 @@
 import { Entity, Column, ManyToMany } from "typeorm";
 import { Usuario } from "./user-enity";
-import { BaseEntity } from "../common/base-entity";
+import { BaseEntity } from "../common/helper/base-entity";
 
 // Definir el Enum
 export enum RolTipo {

@@ -1,6 +1,6 @@
 import { Entity, Column, Unique, ManyToMany, JoinTable } from "typeorm";
-import { BaseEntity } from "../common/base-entity";
 import { Rol } from "./rol-entity";
+import { BaseEntity } from "../common/helper/base-entity";
 
 @Entity("usuario")
 @Unique(["email"])

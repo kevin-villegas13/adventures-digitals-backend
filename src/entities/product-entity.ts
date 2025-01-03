@@ -1,7 +1,7 @@
 import { Entity, Column, ManyToOne, OneToMany } from "typeorm";
-import { BaseEntity } from "../common/base-entity";
 import { Categoria } from "./category-entity";
 import { Detalle } from "./detalle-entity";
+import { BaseEntity } from "../common/helper/base-entity";
 
 @Entity("producto")
 export class Producto extends BaseEntity {
