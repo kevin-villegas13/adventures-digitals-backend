@@ -5,6 +5,7 @@ import { AuthRegisterDto } from "./dto/auth-register.Dto";
 import * as argon2 from "argon2";
 import * as jwt from "jsonwebtoken";
 import { IAccessToken } from "./interface/accesstoke.interface";
+import { AuthLoginDto } from "./dto/auth-login.dto";
 
 export class AuthService {
   private readonly userRepository = AppDataSource.getRepository(Usuario);
@@ -61,14 +62,46 @@ export class AuthService {
     return token;
   }
 
+  async verifyPassword(authLoginDto: AuthLoginDto): Promise<boolean> {
+    const { email, password } = authLoginDto;
+
+    const user = await this.userRepository.findOne({
+      where: { email },
+    });
+
+    if (!user) throw new Error("User not found");
+
+    const isValid = await argon2.verify(user.password, password);
+
+    return isValid;
+  }
+
+  async login(authLoginDto: AuthLoginDto): Promise<IAccessToken> {
+    const { email, password } = authLoginDto;
+
+    const user = await this.userRepository.findOne({
+      where: { email },
+    });
+
+    if (!user) throw new Error("User not found");
+
+    const isValid = await argon2.verify(user.password, password);
+
+    if (!isValid) throw new Error("Invalid password");
+
+    const token = await this.generateToken(email);
+
+    return token;
+  }
+
   async generateToken(email: string): Promise<IAccessToken> {
     // Crear el payload para el JWT (solo el correo)
     const payload = { sub: email };
 
     // Generar el token JWT usando la clave secreta desde el entorno
-    const access_token = jwt.sign(payload, this.jwtSecret!, {
-      expiresIn: this.expireTime,
-    });
+    const access_token = jwt.sign(payload, this.jwtSecret!);
+
+    console.log(access_token);
 
     return {
       token: access_token,
