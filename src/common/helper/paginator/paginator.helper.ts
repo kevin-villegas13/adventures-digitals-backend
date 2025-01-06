@@ -1,4 +1,4 @@
-import { ResponseList } from "./paginator/type/paginator.interface";
+import { ResponseList } from "../paginator/type/paginator.interface";
 
 export class Paginator {
   public static Format<T>(

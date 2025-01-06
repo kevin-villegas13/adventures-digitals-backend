@@ -6,23 +6,20 @@ export const authMiddleware = (
   req: AuthRequest,
   res: Response,
   next: NextFunction
-) => {
-  // Extraer el token del encabezado Authorization
+): void => {
   const token = extractTokenFromHeader(req);
-  
-  if (!token) return res.status(401).json({ message: "Unauthorized: Token is missing" });
+
+  if (!token) {
+    res.status(401).json({ message: "Unauthorized: Token is missing" });
+    return;
+  }
 
   try {
-    // Verificar el token
     const payload = jwt.verify(token, process.env.JWT_SECRET as string);
-
-    // Asignar el payload al objeto `request`
     req.user = payload;
-
-    // Continuar al siguiente middleware o controlador
     next();
   } catch (error) {
-    return res.status(401).json({ message: "Unauthorized: Invalid token" });
+    res.status(401).json({ message: "Unauthorized: Invalid token" });
   }
 };
 

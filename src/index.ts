@@ -4,12 +4,12 @@ import cors from "cors";
 import dotenv from "dotenv";
 import authRoutes from "./auth/auth.routes";
 import { AppDataSource } from "./database/database";
+import productRoutes from "./product/product.routes";
 
 dotenv.config();
 
 const app = express();
 
-// Definir el puerto a partir de la variable de entorno o usar un valor predeterminado
 const PORT = process.env.PORT;
 
 // Middlewares
@@ -18,7 +18,8 @@ app.use(express.json());
 app.use(cors());
 
 // Rutas
-app.use("/auth", authRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/products", productRoutes);
 
 const startServer = async () => {
   try {
