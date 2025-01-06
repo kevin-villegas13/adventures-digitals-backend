@@ -1,6 +1,7 @@
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { AuthRequest } from "./interface/auth-request.interface";
+import { extractTokenFromHeader } from "./utils/token.utils";
 
 export const authMiddleware = (
   req: AuthRequest,
@@ -21,13 +22,4 @@ export const authMiddleware = (
   } catch (error) {
     res.status(401).json({ message: "Unauthorized: Invalid token" });
   }
-};
-
-// Función para extraer el token del encabezado
-const extractTokenFromHeader = (req: Request): string | undefined => {
-  const authorization = req.headers.authorization;
-  if (!authorization) return undefined;
-
-  const [type, token] = authorization.split(" ");
-  return type === "Bearer" ? token : undefined;
 };

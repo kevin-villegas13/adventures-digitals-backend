@@ -3,8 +3,10 @@ import morgan from "morgan";
 import cors from "cors";
 import dotenv from "dotenv";
 import authRoutes from "./auth/auth.routes";
-import { AppDataSource } from "./database/database";
 import productRoutes from "./product/product.routes";
+import userRoutes from "./user/user.routes";
+import { AppDataSource } from "./database/database";
+import { insertRolesIfNotExist } from "./database/init";
 
 dotenv.config();
 
@@ -20,11 +22,13 @@ app.use(cors());
 // Rutas
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/users", userRoutes);
 
 const startServer = async () => {
   try {
     // Inicializar la base de datos
     await AppDataSource.initialize();
+    await insertRolesIfNotExist();
     console.log("Data Source has been initialized!");
 
     // Iniciar el servidor
