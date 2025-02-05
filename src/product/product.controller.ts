@@ -1,62 +1,34 @@
-import { Request, Response } from "express";
-import { ProductoService } from "./product.service";
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { ProductService } from './product.service';
+import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 
-const productService = new ProductoService();
-
+@Controller('product')
 export class ProductController {
-  async createProduct(req: Request, res: Response) {
-    try {
-      const productData = req.body;
-      const imageFile = req.file?.path;
+  constructor(private readonly productService: ProductService) {}
 
-      if (!imageFile) {
-        return res.status(400).json({ message: "Image file is required" });
-      }
-
-      const product = await productService.createProduct(
-        productData,
-        imageFile
-      );
-      res.status(201).json(product);
-    } catch (error: any) {
-      res.status(500).json({ message: error.message });
-    }
+  @Post()
+  create(@Body() createProductDto: CreateProductDto) {
+    return this.productService.create(createProductDto);
   }
 
-  async getAllProducts(req: Request, res: Response) {
-    const page = Number(req.query.page as string) || 1;
-    const limit = Number(req.query.limit as string) || 10;
-    const searchQuery = (req.query.search as string) || "";
-    try {
-      const products = await productService.getAllProducts(
-        page,
-        limit,
-        searchQuery
-      );
-      res.status(200).json(products);
-    } catch (error: any) {
-      res.status(500).json({ message: error.message });
-    }
+  @Get()
+  findAll() {
+    return this.productService.findAll();
   }
 
-  async getProductById(req: Request, res: Response) {
-    const { id } = req.params;
-
-    try {
-      const products = await productService.getProductById(Number(id));
-      res.status(200).json(products);
-    } catch (error: any) {
-      res.status(500).json({ message: error.message });
-    }
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.productService.findOne(+id);
   }
 
-  async deleteProduct(req: Request, res: Response) {
-    try {
-      const { id } = req.params;
-      await productService.deleteProduct(Number(id));
-      res.status(200).json({ message: "Product deleted successfully" });
-    } catch (error: any) {
-      res.status(500).json({ message: error.message });
-    }
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
+    return this.productService.update(+id, updateProductDto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.productService.remove(+id);
   }
 }

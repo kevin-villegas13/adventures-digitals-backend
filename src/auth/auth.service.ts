@@ -1,110 +1,26 @@
-import { AppDataSource } from "../database/database";
-import { Usuario } from "../entities/user-enity";
-import { Rol, RolTipo } from "../entities/rol-entity";
-import { AuthRegisterDto } from "./dto/auth-register.Dto";
-import * as argon2 from "argon2";
-import * as jwt from "jsonwebtoken";
-import { IAccessToken } from "./interface/accesstoke.interface";
-import { AuthLoginDto } from "./dto/auth-login.dto";
+import { Injectable } from '@nestjs/common';
+import { CreateAuthDto } from './dto/create-auth.dto';
+import { UpdateAuthDto } from './dto/update-auth.dto';
 
+@Injectable()
 export class AuthService {
-  private readonly userRepository = AppDataSource.getRepository(Usuario);
-  private readonly rolRepository = AppDataSource.getRepository(Rol);
-  private readonly jwtSecret: string | undefined;
-  private readonly expireTime: string | undefined;
-
-  constructor() {
-    this.jwtSecret = process.env.JWT_SECRET;
-    this.expireTime = process.env.JWT_EXPIRE_TIME;
+  create(createAuthDto: CreateAuthDto) {
+    return 'This action adds a new auth';
   }
 
-  async register(authRegisterDto: AuthRegisterDto): Promise<IAccessToken> {
-    const { email, password, zonaPostal } = authRegisterDto;
-
-    // Verificar si el usuario ya existe
-    const existingUser = await this.userRepository.findOne({
-      where: { email },
-    });
-
-    if (existingUser) throw new Error("Email is already registered");
-
-    // Encriptar la contraseña
-    const hashedPassword = await argon2.hash(password);
-
-    // Obtener el rol "comprador"
-    let compradorRol = await this.rolRepository.findOne({
-      where: { tipo: RolTipo.COMPRADOR },
-    });
-
-    if (!compradorRol) {
-      compradorRol = this.rolRepository.create({
-        tipo: RolTipo.COMPRADOR,
-      });
-      await this.rolRepository.save(compradorRol);
-    }
-
-    const zonaPostalNumber = zonaPostal ? Number(zonaPostal) : undefined;
-
-    // Crear y guardar el usuario con el rol "comprador"
-    const user = this.userRepository.create({
-      ...authRegisterDto,
-      password: hashedPassword,
-      zonaPostal: zonaPostalNumber,
-      roles: [compradorRol],
-    });
-
-    await this.userRepository.save(user);
-
-    if (!email) throw new Error("Email is required");
-
-    const token = await this.generateToken(email);
-
-    return token;
+  findAll() {
+    return `This action returns all auth`;
   }
 
-  async verifyPassword(authLoginDto: AuthLoginDto): Promise<boolean> {
-    const { email, password } = authLoginDto;
-
-    const user = await this.userRepository.findOne({
-      where: { email },
-    });
-
-    if (!user) throw new Error("User not found");
-
-    const isValid = await argon2.verify(user.password, password);
-
-    return isValid;
+  findOne(id: number) {
+    return `This action returns a #${id} auth`;
   }
 
-  async login(authLoginDto: AuthLoginDto): Promise<IAccessToken> {
-    const { email, password } = authLoginDto;
-
-    const user = await this.userRepository.findOne({
-      where: { email },
-    });
-
-    if (!user) throw new Error("User not found");
-
-    const isValid = await argon2.verify(user.password, password);
-
-    if (!isValid) throw new Error("Invalid password");
-
-    const token = await this.generateToken(email);
-
-    return token;
+  update(id: number, updateAuthDto: UpdateAuthDto) {
+    return `This action updates a #${id} auth`;
   }
 
-  async generateToken(email: string): Promise<IAccessToken> {
-    // Crear el payload para el JWT (solo el correo)
-    const payload = { sub: email };
-
-    // Generar el token JWT usando la clave secreta desde el entorno
-    const access_token = jwt.sign(payload, this.jwtSecret!);
-
-    console.log(access_token);
-
-    return {
-      token: access_token,
-    };
+  remove(id: number) {
+    return `This action removes a #${id} auth`;
   }
 }

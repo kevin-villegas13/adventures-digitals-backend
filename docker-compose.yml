@@ -1,16 +1,15 @@
-version: "3.8"
 services:
   db:
-    image: mysql:latest
-    container_name: mysql-latest
+    image: postgres:latest
+    container_name: postgres-latest
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root@password
-      MYSQL_USER: username
-      MYSQL_PASSWORD: password
-      MYSQL_DATABASE: name-db
+      POSTGRES_USER: username
+      POSTGRES_PASSWORD: password
+      POSTGRES_ROOT_PASSWORD: root@password
+      POSTGRES_DB: db
     ports:
-      - "3306:3306"  
+      - "5433:5432"
 
   adminer:
     image: adminer

@@ -1,32 +1,34 @@
-import { Request, Response } from "express";
-import { UserService } from "./user.service";
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { UserService } from './user.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
-const userService = new UserService();
-
+@Controller('user')
 export class UserController {
-  async getUserInfo(req: Request, res: Response) {
-    try {
-      const user = await userService.getUserFromToken(req);
-      res.status(200).json(user);
-    } catch (error: any) {
-      res.status(500).json({
-        message: "Error al obtener información del usuario",
-        error: error.message,
-      });
-    }
+  constructor(private readonly userService: UserService) {}
+
+  @Post()
+  create(@Body() createUserDto: CreateUserDto) {
+    return this.userService.create(createUserDto);
   }
 
-  async updateRole(req: Request, res: Response) {
-    const { newRole } = req.body;
+  @Get()
+  findAll() {
+    return this.userService.findAll();
+  }
 
-    try {
-      const user = await userService.updateUserRole(req, { newRole });
-      res.status(200).json(user);
-    } catch (error: any) {
-      res.status(500).json({
-        message: "Error al obtener información del usuario",
-        error: error.message,
-      });
-    }
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.userService.findOne(+id);
+  }
+
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.userService.update(+id, updateUserDto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.userService.remove(+id);
   }
 }
