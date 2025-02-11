@@ -6,7 +6,8 @@ import { BillModule } from './bill/bill.module';
 import { PaymentMethodModule } from './payment-method/payment-method.module';
 import { AuthModule } from './auth/auth.module';
 import { DatabaseModule } from './database/database.module';
-import { DashboardModule } from './dashboard/dashboard.module';
+import { DashboardBuyerModule } from './dashboard-buyer/dashboard-buyer.module';
+import { DashboardSellerModule } from './dashboard-seller/dashboard-seller.module';
 
 @Module({
   imports: [
@@ -19,7 +20,8 @@ import { DashboardModule } from './dashboard/dashboard.module';
     BillModule,
     PaymentMethodModule,
     AuthModule,
-    DashboardModule,
+    DashboardBuyerModule,
+    DashboardSellerModule,
   ],
 })
 export class AppModule {}

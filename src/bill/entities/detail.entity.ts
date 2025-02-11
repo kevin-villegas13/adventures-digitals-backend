@@ -10,10 +10,9 @@ export class Detail {
   @Column({ type: 'int', nullable: false })
   quantity: number;
 
-  @Column('decimal', { precision: 10, scale: 2, nullable: false })
+  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: false })
   unitPrice: number;
 
-  // Relación con Factura (Bill)
   @ManyToOne(() => Bill, (bill) => bill.details, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'bill_id' })
   bill: Bill;
@@ -21,5 +20,6 @@ export class Detail {
   @ManyToOne(() => Product, (product) => product.details, {
     onDelete: 'CASCADE',
   })
+  @JoinColumn({ name: 'product_id' })
   product: Product;
 }

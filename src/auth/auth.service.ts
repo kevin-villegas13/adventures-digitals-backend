@@ -36,7 +36,8 @@ export class AuthService {
 
     return {
       accessToken: await this.jwtService.signAsync({
-        userId: user.email,
+        id: user.id,
+        email: user.email,
       }),
     };
   }
@@ -62,7 +63,8 @@ export class AuthService {
 
     return {
       accessToken: await this.jwtService.signAsync({
-        userId: savedUser.email,
+        id: savedUser.id,
+        email: savedUser.email,
       }),
     };
   }
