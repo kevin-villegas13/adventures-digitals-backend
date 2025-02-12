@@ -9,7 +9,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { Role } from './role.entity';
+import { Role } from '../../role/entity/role.entity';
 import { PaymentMethod } from 'src/payment-method/entities/payment-method.entity';
 import { Bill } from 'src/bill/entities/bill.entity';
 

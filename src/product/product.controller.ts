@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { Roles } from 'src/auth/decorador/roles.decorator';
-import { RoleType } from 'src/user/enum/role.type';
+import { RoleType } from 'src/role/enum/role.type';
 import { CreateProductDto } from './dto/create-product.dto';
 import { Product } from './entities/product.entity';
 import { Response } from 'src/common/response/type/response.type';

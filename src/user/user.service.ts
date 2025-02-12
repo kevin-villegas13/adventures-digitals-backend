@@ -4,8 +4,11 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-import { Role } from './entities/role.entity';
+import { Role } from '../role/entity/role.entity';
 import { Response } from 'src/common/response/type/response.type';
+import { AuthenticatedRequest } from 'src/auth/interface/request.interface';
+import { SafeEntity } from 'src/common/response/type/safe.type';
+import { sanitizeEntity } from 'src/common/utils/sanitizeEntity';
 
 @Injectable()
 export class UserService {
@@ -14,27 +17,29 @@ export class UserService {
     @InjectRepository(Role) private readonly roleRepository: Repository<Role>,
   ) {}
 
-  async getProfile(userId: string): Promise<Response<User>> {
+  async getProfile(
+    req: AuthenticatedRequest,
+  ): Promise<Response<SafeEntity<User, 'password'>>> {
     const user = await this.userRepository.findOne({
-      where: { id: Number(userId) },
+      where: { id: Number(req.user.id) },
       relations: ['roles'],
     });
 
-    if (!user) throw new NotFoundException(`Usuario no encontrado`);
+    if (!user) throw new NotFoundException('Usuario no encontrado');
 
     return {
       status: true,
       message: 'Perfil obtenido con éxito',
-      data: user,
+      data: sanitizeEntity(user, ['password']),
     };
   }
 
   async updateProfile(
-    userId: string,
+    req: AuthenticatedRequest,
     updateUserDto: UpdateUserDto,
-  ): Promise<Response<User>> {
+  ): Promise<Response<SafeEntity<User, 'password'>>> {
     const user = await this.userRepository.findOne({
-      where: { id: Number(userId) },
+      where: { id: Number(req.user.id) },
       relations: ['roles'],
     });
 
@@ -55,33 +60,35 @@ export class UserService {
     return {
       status: true,
       message: 'Perfil actualizado con éxito',
-      data: updatedUser,
+      data: sanitizeEntity(updatedUser, ['password']),
     };
   }
 
   async updateUserRoles(
-    userId: string,
-    roleIds: number[],
-  ): Promise<Response<User>> {
+    req: AuthenticatedRequest,
+    roleIds: number,
+  ): Promise<Response<SafeEntity<User, 'password'>>> {
     const user = await this.userRepository.findOne({
-      where: { id: Number(userId) },
+      where: { id: Number(req.user.id) },
       relations: ['roles'],
     });
 
     if (!user) throw new NotFoundException('Usuario no encontrado');
 
-    const roles = await this.roleRepository.find({
-      where: { id: In(roleIds) },
+    const role = await this.roleRepository.find({
+      where: { id: roleIds },
     });
-    
-    user.roles = roles;
+
+    if (!role) throw new NotFoundException('Rol no encontrado');
+
+    user.roles = role;
 
     await this.userRepository.save(user);
 
     return {
       status: true,
       message: 'Roles actualizados con éxito',
-      data: user,
+      data: sanitizeEntity(user, ['password']),
     };
   }
 }

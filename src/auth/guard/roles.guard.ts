@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { RoleType } from 'src/user/enum/role.type';
+import { RoleType } from 'src/role/enum/role.type';
 
 @Injectable()
 export class RolesGuard implements CanActivate {

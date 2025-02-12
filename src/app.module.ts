@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { DatabaseModule } from './database/database.module';
 import { DashboardBuyerModule } from './dashboard-buyer/dashboard-buyer.module';
 import { DashboardSellerModule } from './dashboard-seller/dashboard-seller.module';
+import { RoleModule } from './role/role.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { DashboardSellerModule } from './dashboard-seller/dashboard-seller.modul
     }),
     DatabaseModule,
     UserModule,
+    RoleModule,
     ProductModule,
     BillModule,
     PaymentMethodModule,
