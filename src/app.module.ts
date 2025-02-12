@@ -9,6 +9,7 @@ import { DatabaseModule } from './database/database.module';
 import { DashboardBuyerModule } from './dashboard-buyer/dashboard-buyer.module';
 import { DashboardSellerModule } from './dashboard-seller/dashboard-seller.module';
 import { RoleModule } from './role/role.module';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { RoleModule } from './role/role.module';
     UserModule,
     RoleModule,
     ProductModule,
+    CategoryModule,
     BillModule,
     PaymentMethodModule,
     AuthModule,

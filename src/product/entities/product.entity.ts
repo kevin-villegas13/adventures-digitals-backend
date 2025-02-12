@@ -1,5 +1,5 @@
 import { Entity, Column, ManyToOne, OneToMany } from 'typeorm';
-import { Category } from './category.entity';
+import { Category } from '../../category/entities/category.entity';
 import { Detail } from 'src/bill/entities/detail.entity';
 import { BaseEntity } from 'src/common/base.entity';
 
