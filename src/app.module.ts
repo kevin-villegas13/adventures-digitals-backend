@@ -7,7 +7,6 @@ import { PaymentMethodModule } from './payment-method/payment-method.module';
 import { AuthModule } from './auth/auth.module';
 import { DatabaseModule } from './database/database.module';
 import { DashboardBuyerModule } from './dashboard-buyer/dashboard-buyer.module';
-import { DashboardSellerModule } from './dashboard-seller/dashboard-seller.module';
 import { RoleModule } from './role/role.module';
 import { CategoryModule } from './category/category.module';
 
@@ -25,7 +24,6 @@ import { CategoryModule } from './category/category.module';
     PaymentMethodModule,
     AuthModule,
     DashboardBuyerModule,
-    DashboardSellerModule,
   ],
 })
 export class AppModule {}

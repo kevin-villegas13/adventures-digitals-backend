@@ -1,26 +1,58 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'src/user/entities/user.entity';
+import { PaymentMethod } from './entities/payment-method.entity';
+import { Repository } from 'typeorm';
+import { AuthenticatedRequest } from 'src/auth/interface/request.interface';
 import { CreatePaymentMethodDto } from './dto/create-payment-method.dto';
-import { UpdatePaymentMethodDto } from './dto/update-payment-method.dto';
+import { Response } from '../common/response/type/response.type';
 
 @Injectable()
 export class PaymentMethodService {
-  create(createPaymentMethodDto: CreatePaymentMethodDto) {
-    return 'This action adds a new paymentMethod';
-  }
+  constructor(
+    @InjectRepository(PaymentMethod)
+    private readonly paymentMethodRepository: Repository<PaymentMethod>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) {}
 
-  findAll() {
-    return `This action returns all paymentMethod`;
-  }
+  async create(
+    req: AuthenticatedRequest,
+    createPaymentMethodDto: CreatePaymentMethodDto,
+  ): Promise<Response<PaymentMethod>> {
+    const user = await this.userRepository.findOne({
+      where: { id: req.user.id },
+    });
 
-  findOne(id: number) {
-    return `This action returns a #${id} paymentMethod`;
-  }
+    if (!user) throw new NotFoundException('Usuario no encontrado');
 
-  update(id: number, updatePaymentMethodDto: UpdatePaymentMethodDto) {
-    return `This action updates a #${id} paymentMethod`;
-  }
+    const existingPaymentMethod = await this.paymentMethodRepository.findOne({
+      where: {
+        user: { id: user.id },
+        type: createPaymentMethodDto.type,
+        lastFourDigits: createPaymentMethodDto.lastFourDigits,
+      },
+    });
 
-  remove(id: number) {
-    return `This action removes a #${id} paymentMethod`;
+    if (existingPaymentMethod)
+      throw new ConflictException('Este método de pago ya está registrado');
+
+    const paymentMethod = this.paymentMethodRepository.create({
+      ...createPaymentMethodDto,
+      user,
+    });
+
+    const savedPaymentMethod =
+      await this.paymentMethodRepository.save(paymentMethod);
+
+    return {
+      status: true,
+      message: 'Método de pago agregado correctamente',
+      data: savedPaymentMethod,
+    };
   }
 }

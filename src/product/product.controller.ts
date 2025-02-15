@@ -29,9 +29,8 @@ export class ProductController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RoleType.SELLER)
-  @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('image'))
   async create(
     @Body() createProductDto: CreateProductDto,
@@ -48,9 +47,8 @@ export class ProductController {
 
   @Patch(':id')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RoleType.SELLER)
-  @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('image'))
   async update(
     @Param('id') id: number,
@@ -62,9 +60,8 @@ export class ProductController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RoleType.SELLER)
-  @UseGuards(JwtAuthGuard)
   async remove(@Param('id') id: number): Promise<Response<null>> {
     return this.productService.remove(id);
   }

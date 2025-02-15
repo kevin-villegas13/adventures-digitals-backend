@@ -1,14 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { Role } from '../role/entity/role.entity';
-import { Response } from 'src/common/response/type/response.type';
+import { Response } from '../common/response/type/response.type';
 import { AuthenticatedRequest } from 'src/auth/interface/request.interface';
-import { SafeEntity } from 'src/common/response/type/safe.type';
-import { sanitizeEntity } from 'src/common/utils/sanitizeEntity';
+import { SafeEntity } from '../common/response/type/safe.type';
+import { sanitizeEntity } from '../common/utils/sanitizeEntity';
 
 @Injectable()
 export class UserService {

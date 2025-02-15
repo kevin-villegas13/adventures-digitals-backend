@@ -1,6 +1,6 @@
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Category } from './entities/category.entity';
 import { CategoryType } from './enum/category.type';
 @Injectable()
@@ -17,20 +17,21 @@ export class CategoryService implements OnApplicationBootstrap {
   private async seedCategories() {
     const categories = Object.values(CategoryType);
 
-    await Promise.all(
-      categories.map(async (category) => {
-        const categoryExists = await this.categoryRepository.findOne({
-          where: { name: category },
-        });
+    const existingCategories = await this.categoryRepository.find({
+      where: { name: In(categories) },
+    });
 
-        if (!categoryExists) {
-          const newCategory = this.categoryRepository.create({
-            name: category,
-          });
-          await this.categoryRepository.save(newCategory);
-        }
-      }),
+    const existingCategoryNames = new Set(
+      existingCategories.map((cat) => cat.name),
     );
+
+    const newCategories = categories
+      .filter((category) => !existingCategoryNames.has(category))
+      .map((name) => this.categoryRepository.create({ name }));
+
+    if (newCategories.length > 0) {
+      await this.categoryRepository.save(newCategories);
+    }
   }
 
   async getAllCategories(): Promise<Category[]> {
