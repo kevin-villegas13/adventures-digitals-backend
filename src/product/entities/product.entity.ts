@@ -23,9 +23,6 @@ export class Product extends BaseEntity {
   @Column({ type: 'float', nullable: true })
   rating: number;
 
-  @Column({ type: 'timestamp', nullable: true })
-  publishedAt: Date;
-
   @Column({ nullable: true })
   image: string;
 

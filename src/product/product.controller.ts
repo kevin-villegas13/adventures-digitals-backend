@@ -22,6 +22,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { RolesGuard } from 'src/auth/guard/roles.guard';
 import { JwtAuthGuard } from 'src/auth/guard/auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { UpdateRatingDto } from './dto/update-rating.dto';
 
 @Controller('product')
 export class ProductController {
@@ -64,5 +65,16 @@ export class ProductController {
   @Roles(RoleType.SELLER)
   async remove(@Param('id') id: number): Promise<Response<null>> {
     return this.productService.remove(id);
+  }
+
+  @Patch(':id/rating')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(RoleType.BUYER)
+  async updateRating(
+    @Param('id') id: number,
+    @Body() updateRatingDto: UpdateRatingDto,
+  ) {
+    return this.productService.updateRating(id, updateRatingDto.rating);
   }
 }

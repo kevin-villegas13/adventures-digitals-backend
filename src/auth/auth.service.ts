@@ -25,7 +25,10 @@ export class AuthService {
 
     const user = await this.userRepository.findOne({
       where: { email: email },
+      relations: ['roles'],
     });
+
+    console.log(user);
 
     if (!user) throw new NotFoundException('User not found');
 
@@ -38,6 +41,7 @@ export class AuthService {
       accessToken: await this.jwtService.signAsync({
         id: user.id,
         email: user.email,
+        roles: user.roles.map((role) => role.type),
       }),
     };
   }
@@ -47,6 +51,7 @@ export class AuthService {
 
     const user = await this.userRepository.findOne({
       where: { email: email },
+      relations: ['roles'],
     });
 
     if (user) throw new NotFoundException(`user found for emal: ${email}`);
@@ -65,6 +70,7 @@ export class AuthService {
       accessToken: await this.jwtService.signAsync({
         id: savedUser.id,
         email: savedUser.email,
+        roles: savedUser.roles.map((role) => role.type),
       }),
     };
   }

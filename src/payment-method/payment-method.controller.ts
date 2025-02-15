@@ -27,7 +27,6 @@ export class PaymentMethodController {
     @Req() req: AuthenticatedRequest,
     @Body() createPaymentMethodDto: CreatePaymentMethodDto,
   ) {
-    const userId = req.user.id;
     return this.paymentMethodService.create(req, createPaymentMethodDto);
   }
 }

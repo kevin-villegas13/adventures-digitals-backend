@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
@@ -24,9 +28,22 @@ export class ProductService {
     createProductDto: CreateProductDto,
     image: Express.Multer.File,
   ): Promise<Response<Product>> {
-    const { categoryId, ...productData } = createProductDto;
+    const { categoryId, name, brand, ...productData } = createProductDto;
 
-    const product = this.productRepository.create(productData);
+    const existingProduct = await this.productRepository.findOne({
+      where: { name, brand },
+    });
+
+    if (existingProduct)
+      throw new ConflictException(
+        `Product with name "${name}" and brand "${brand}" already exists`,
+      );
+
+    const product = this.productRepository.create({
+      name,
+      brand,
+      ...productData,
+    });
 
     if (categoryId) {
       const category = await this.categoryRepository.findOne({
@@ -55,7 +72,6 @@ export class ProductService {
 
   async findAll(): Promise<Response<Product[]>> {
     const products = await this.productRepository.find({
-      where: { stock: 1 },
       relations: ['category'],
     });
 
@@ -105,5 +121,15 @@ export class ProductService {
       message: 'Product deleted successfully',
       data: null,
     };
+  }
+
+  async updateRating(productId: number, rating: number) {
+    const product = await this.productRepository.findOne({
+      where: { id: productId },
+    });
+    if (!product) throw new NotFoundException('Producto no encontrado');
+
+    product.rating = rating;
+    return this.productRepository.save(product);
   }
 }

@@ -2,7 +2,6 @@ import { BaseEntity } from 'src/common/base.entity';
 import {
   Entity,
   Column,
-  Unique,
   ManyToMany,
   JoinTable,
   OneToMany,
